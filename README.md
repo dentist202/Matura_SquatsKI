@@ -60,3 +60,10 @@ Die Taste `q` beendet das Programm. Die Werte jedes Bildes werden in `results.cs
 
 ## 7. test.py
 Hilfsprogramm für die Auswertung der gespeicherten CSV-Dateien (Diagramme, Slider, Skelett). Es gehört nicht zur App.
+
+
+## Neue Version (nach der Abgabe ergänzt)
+- main.py: abgegebene Version
+- neue_version/main_neue_version.py: mit Startbildschirm (Kamera 0 / Kamera 1 / Demo-Video), Schliessen mit X
+- Start: im Ordner neue_version `python main_neue_version.py` ausführen
+- Ohne Python: SquatsKI.exe unter "Releases" herunterladen
