@@ -212,6 +212,7 @@ def calculate_angle(point_a, point_b, point_c):
  
     return np.degrees(np.arccos(cosine_angle))
 
+# << === CLAUDE: 2D-Versionen meiner 3D-Funktionen, gleiche Logik (um Zeit zu sparen) === >>
 
 def point_above_2d(point, distance):
     # у пікселях y росте вниз, тому "вгору" = менший y
@@ -230,7 +231,7 @@ def landmarks_2d_to_dict(landmarks_2d, frame_w, frame_h):
         positions[index] = [landmark.x * frame_w, landmark.y * frame_h]
     return positions
 
-
+# <<// === CLAUDE === >>
  
 # ============================================================
 #                        Landmarks
@@ -296,7 +297,7 @@ def length_2d(landmarks_2d, point_1, point_2, frame_w, frame_h):
 
     return math.dist(start, end)
 
- # 2D
+ # << === CLAUDE: 2D-Version meiner Funktion calculate_height, gleiche Logik (um Zeit zu sparen) === >>
 
 def calculate_height_2d(landmarks_2d, frame_w, frame_h):
 
@@ -328,7 +329,7 @@ def calculate_height_2d(landmarks_2d, frame_w, frame_h):
         )
 
     return total_left_side, total_right_side
-
+# <<// === CLAUDE === >>
 
 
 def csv_list(all_frames, frame_index, timestamp_ms,
@@ -476,7 +477,7 @@ def grade(value, green_limit, yellow_limit):
     else:
         return "red"
 
-# Feedback, Startbildschirm und Resultat-Tabelle
+# << === CLAUDE: Feedback, Startbildschirm und Resultat-Tabelle === >>
 
 def rep_feedback(result):
     colors = [result["K2_color"], result["K4_color"], result["K5_color"], result["K6_color"], result["K7_color"]]
@@ -588,7 +589,8 @@ def show_start_screen():
     while start_clicked == "no":
         cv2.imshow("Squats with AI", screen)
         cv2.waitKey(30)
-
+     
+# <<// === CLAUDE === >>
 
 # ============================================================
 #                             MAIN LOOP
@@ -705,14 +707,14 @@ def main():
             draw_skeleton_2d(frame, landmarks_2d)
 
 
-            # Points on the right side of the body
+            # << === CLAUDE: Points on the right side of the body === >>
 
             # right side of the body in MediaPipe
             right_points = {12, 24, 26, 28, 30, 32}
 
             for index, landmark in enumerate(landmarks_2d):
                 if index in right_points:
-
+           # <<// === CLAUDE === >>
 
                     x = int(landmark.x * frame.shape[1])
                     y = int(landmark.y * frame.shape[0])
@@ -769,7 +771,7 @@ def main():
                 vertical_point_left_side,
             )
 
-            # 2D
+            # << === CLAUDE: 2D-Berechnungen wie meine 3D-Berechnungen oben, gleiche Logik (um Zeit zu sparen) === >>
 
             frame_w = frame.shape[1]
             frame_h = frame.shape[0]
@@ -811,7 +813,8 @@ def main():
 
             current_height_left_side_2d, current_height_right_side_2d = calculate_height_2d(
                 landmarks_2d, frame_w, frame_h)
-
+         
+            # <<// === CLAUDE === >>
 
 
 
@@ -895,16 +898,16 @@ def main():
                         rep_count += 1
 
                         bottom = int(np.argmin(rep_k2_values)) #index für den tiefsten Punkt
-                        k2_bottom = float(np.median(rep_k2_values[bottom- 2:bottom+3])) #5 indexes in den tiefsten Punkt -> 5 aufeinanderfolgende werte -> median
+                        k2_bottom = float(np.median(rep_k2_values[bottom- 2:bottom+3])) #claude/idea: Median aus 5 Bildern um den tiefsten Punkt
                         
-                        torso_smooth = pd.Series(rep_torso_angles).rolling(5, center=True, min_periods=1).median().values #smooth torso angles: median over 5 frames for each frame, removes single jumps
+                        torso_smooth = pd.Series(rep_torso_angles).rolling(5, center=True, min_periods=1).median().values  #claude /smooth torso angles: median over 5 frames for each frame, removes single jumps
 
                         
                         k4_bottom = float(torso_smooth[bottom])
                         k6_bottom = float(torso_smooth[bottom:].max()- torso_smooth[bottom])
                         
 
-                        #Letzte 45 Bilder (ca. 1,5 s bei 30 fps): nur der Stand direkt vor dieser Kniebeuge
+                        #claude/idea/Letzte 45 Bilder (ca. 1,5 s bei 30 fps): nur der Stand direkt vor dieser Kniebeuge
 
                         heel_x_stand = np.array(stand_heel_x[-45:]) 
                         heel_y_stand = np.array(stand_heel_y[-45:])
@@ -912,7 +915,7 @@ def main():
                         toe_y_stand= np.array(stand_toe_y[-45:])
                         thigh_stand= np.array(stand_thigh_length[-45:])
 
-                        heel_smooth =pd.Series(rep_heel_y).rolling(5, center=True, min_periods=1).median().values
+                        heel_smooth =pd.Series(rep_heel_y).rolling(5, center=True, min_periods=1).median().values #claude
                         
                         k5_max = float((np.median(heel_y_stand)- heel_smooth.min())/np.median(thigh_stand)* 100)
 
@@ -920,24 +923,24 @@ def main():
                         foot_mid = np.median((heel_x_stand + toe_x_stand) / 2)
                         
 
-                        shoulder_smooth = pd.Series(rep_shoulder_x).rolling(5, center=True, min_periods=1).median().values
+                        shoulder_smooth = pd.Series(rep_shoulder_x).rolling(5, center=True, min_periods=1).median().values #claude
                         k7_values = (shoulder_smooth - foot_mid) / foot_length * 100 # [5,4,3] - 2 = [3,2,1]
 
-                        k7_max = float(k7_values[np.argmax(np.abs(k7_values))]) #grösste Abweichung von der Fussmitte, mit Vorzeichen
+                        k7_max = float(k7_values[np.argmax(np.abs(k7_values))]) #claude/grösste Abweichung von der Fussmitte, mit Vorzeichen
 
-                        k1_bottom = float(np.median(rep_knee_angles[bottom- 2:bottom + 3]))# nur als zahl 
-                        k3_bottom = float(np.median(rep_hip_angles[bottom- 2:bottom + 3])) - k1_bottom# nur als zahl
+                        k1_bottom = float(np.median(rep_knee_angles[bottom- 2:bottom + 3]))# nur als zahl // claude/idea: median aus 5 Bildern
+                        k3_bottom = float(np.median(rep_hip_angles[bottom- 2:bottom + 3])) - k1_bottom# nur als zahl // claude/idea:median aus 5 Bildern
 
 
-                        # Schienbeinneigung unten: ab 45° (sehr tief) wird K7 nur als Zahl gezeigt
-                        shin_bottom = float(np.median(rep_shin_angles[bottom- 2:bottom+ 3]))
+                        # << === CLAUDE === Schienbeinneigung unten: ab 45° (sehr tief) wird K7 nur als Zahl gezeigt >>
+                        shin_bottom = float(np.median(rep_shin_angles[bottom- 2:bottom+ 3])) #claude
 
                         if shin_bottom< 45:
                             k7_color = grade(abs(k7_max), 25,40)
                         else:
                             k7_color = "number"
 
-
+                      # <<// === CLAUDE === >>
                         rep_results.append({
                             "rep": rep_count,
                             "K1": k1_bottom,
@@ -957,8 +960,6 @@ def main():
                 panel_message = f"Squats: {rep_count}"
                 panel_is_green = True
                 
-
-
 
 
             
@@ -1024,7 +1025,7 @@ def main():
         else:
             panel_color = (0, 0, 180)#red
 
-        # Panel (Overlay)
+        # << === CLAUDE: Panel (Overlay) === >>
 
         if app_state == "SETUP_BOX" or app_state == "SETUP_SIDE":
             cv2.rectangle(frame, (int(frame_w * 0.30), int(frame_h * 0.01)), (int(frame_w * 0.65), int(frame_h * 0.99)), (0, 255, 0), 2)
@@ -1051,7 +1052,9 @@ def main():
         display_frame = cv2.resize(frame, None, fx=900 / frame_h, fy=900 / frame_h,
                                    interpolation=cv2.INTER_AREA)
         cv2.imshow("Squats with AI", display_frame)
-
+     
+        # <<// === CLAUDE === >>
+     
         # "Q" to quit
         if cv2.waitKey(1) & 0xFF == ord("q"):
             break
