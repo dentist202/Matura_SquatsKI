@@ -12,7 +12,7 @@ POSE_CONNECTIONS = [
     (24, 26), (26, 28),             # right leg (the same for right)
 ]
 
-
+# << === CLAUDE === >>
 template_positions = {
     11: (2, 8),     # left shoulder
     12: (-2, 8),      # right shoulder
@@ -28,7 +28,7 @@ template_positions = {
     28: (-1.8, 0),    # right ankle
 }
 
-
+# <<// === CLAUDE === >>
 
 # 2D: draw skeleton on the screen IMPLEMENTED FROM MAIN.PY
 def draw_skeleton_2d_visibility(template_positions, db, i):
@@ -45,7 +45,7 @@ def draw_skeleton_2d_visibility(template_positions, db, i):
             ax1.plot([template_positions[point_1][0],template_positions[point_2][0]], # only x from point 1 and 2
                                  [template_positions[point_1][1],template_positions[point_2][1]], color = "red") # only y from point 1 and 2            
 
-    
+    # << === CLAUDE === >>
 
     for idx, (x, y) in template_positions.items():
         v = db[f"2d_landmark_{idx}_visibility"][i]
@@ -55,7 +55,7 @@ def draw_skeleton_2d_visibility(template_positions, db, i):
     ax1.set_ylim(-1, 9)
     
     # plt.pause(0.001)
-
+    # <<// === CLAUDE === >>
 current_graph_type = "Kniewinkel"
 
 
@@ -74,7 +74,7 @@ def draw_skeleton_3d_visibility(template_positions, db, i):
                                  [template_positions[point_1][1],template_positions[point_2][1]], color = "red") # only y from point 1 and 2            
 
     
-
+    # << === CLAUDE === >>
     for idx, (x, y) in template_positions.items():
         v = db[f"3d_landmark_{idx}_visibility"][i]
         ax2.text(x + 0.1, y, f"({v:.2f})", fontsize=14)
@@ -83,7 +83,7 @@ def draw_skeleton_3d_visibility(template_positions, db, i):
     ax2.set_ylim(-1, 9)
 
     # plt.pause(0.001)
-
+    # <<// === CLAUDE === >>
 current_graph_type = "Kniewinkel"
 
 
@@ -195,28 +195,28 @@ def switch_graph(graph_type):
         ax1.set_title("2D points Visibility: Rot = linke Seite|Schwarz = rechte Seite")
         ax2.set_title("3D points Visibility")
 
-
+        # << === CLAUDE === >>
         draw_skeleton_2d_visibility(template_positions, db, int(slider.val))
-
+        # <<// === CLAUDE === >>
 
         draw_skeleton_3d_visibility(template_positions, db, int(slider.val))
     fig.canvas.draw_idle()
 
  # SLIDER TIME
-
+# << === CLAUDE === SLIDER TIME >>
 def update_slider_text(i):
     # i = номер рядка в CSV (позиція слайдера)
     frame_nr = db["frame"][i]         # справжній номер кадру з CSV
     zeit = time_sec[i]                # час у секундах
     slider.valtext.set_text(f"{frame_nr}  |  {zeit:.2f} s")
-
+# <<// === CLAUDE === >>
 
 
 def slider_upt(val):
 
     global current_graph_type, point2
 
-    i = int(slider.val)          # ← новий рядок
+    i = int(slider.val)
     update_slider_text(i)
 
     if current_graph_type == "Kniewinkel":
@@ -241,7 +241,7 @@ def slider_upt(val):
         i = int(slider.val)
         draw_skeleton_3d(ax1, ax2, ax3, db, i)
 
-
+        # << === CLAUDE === >>
     elif current_graph_type == "2D VS 3D Visibility":
         i = int(slider.val)
         ax1.cla()
@@ -257,6 +257,7 @@ def slider_upt(val):
         draw_skeleton_3d_visibility(template_positions, db, i)  
         draw_skeleton_3d(ax1, ax2, ax3, db, int(slider.val))
         fig.canvas.draw_idle()
+        # <<// === CLAUDE === >>
 
 def draw_skeleton_3d(ax1, ax2, ax3, db, i):
 
